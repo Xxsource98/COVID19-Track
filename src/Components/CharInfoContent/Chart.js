@@ -57,8 +57,6 @@ const Chart = ({
             const recoveredData = summariseArray.Countries.map(e => { return e.TotalRecovered });
             const deathsData = summariseArray.Countries.map(e => { return e.TotalDeaths });
 
-            console.log(recoveredData);
-
             data = {
                 labels: mappedCountries,
                 datasets: [

@@ -165,7 +165,6 @@ const CovidInfoContent = () => {
             if (country.Country === countryToFind) {
                 const totalInfected = country.TotalConfirmed;
                 const totalRecovered = country.TotalRecovered;
-                console.log(`${totalInfected} and ${totalRecovered} for ${country.Country}`)
                 return totalInfected - totalRecovered;
             } else continue;
         }
@@ -186,7 +185,7 @@ const CovidInfoContent = () => {
     const infectedData = isEmpty ? updateGlobalObject("Infected", summariseArray) : updateObject("Infected", covidData);
     const recoveredData = isEmpty ? updateGlobalObject("Recovered", summariseArray) : updateObject("Recovered", covidData);
     const deathsData = isEmpty ? updateGlobalObject("Deaths", summariseArray) : updateObject("Deaths", covidData);
-    const activePeople = isEmpty ? calculateGlobalActivePeople(summariseArray) : calculateActivePeople(summariseArray, country);
+    const activePeople = isEmpty ? calculateGlobalActivePeople(summariseArray) : calculateActivePeople(summariseArray, currentCountry);
 
     return (
         <div className="covid-info-content" onClick={e => {
