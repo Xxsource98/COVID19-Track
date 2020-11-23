@@ -5,13 +5,13 @@ import { useParams } from 'react-router-dom'
 import Input from '../Input/Input'
 import Widget from '../Widget/widget'
 import * as Images from '../../Images/images'
-import { covidContext } from '../../app'
+import { covidContext } from '../../App'
 
 // Style
 import './CovidInfoContent.scss'
 
 const CovidInfoContent = () => {
-    const { covidData, setCovidData, summariseArray, setSummariseArray } = useContext(covidContext);
+    const { covidData, setCovidData, summariseArray, setSummariseArray, currentCountry } = useContext(covidContext);
     const { country } = useParams();
     const isEmpty = country === "" || country === undefined;
 
@@ -198,7 +198,7 @@ const CovidInfoContent = () => {
             }
         }}>
             <Input/>
-            <div className="selected-country">Selected Country: <span>{isEmpty ? "Global" : country}</span></div>
+            <div className="selected-country">Selected Country: <span>{currentCountry === "" ? "Global" : currentCountry}</span></div>
             <div className="widgets-container">
                 <Widget 
                     iconImage={Images.infectLogo}
