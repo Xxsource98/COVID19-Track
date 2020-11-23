@@ -2,7 +2,7 @@ import React, { useState, useContext, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 
 // Components
-import { covidContext } from '../../app'
+import { covidContext } from '../../App'
 
 // Style
 import './Input.scss'
@@ -15,7 +15,7 @@ const updateData = async (url) => {
 }
 
 const Input = () => {    
-    const { setCovidData } = useContext(covidContext);
+    const { setCovidData, setCurrentCountry } = useContext(covidContext);
     const [ orginalCountries, setOriginalCountries ] = useState([]);
     const [ allCountries, setAllCountries ] = useState([]);
 
@@ -27,11 +27,14 @@ const Input = () => {
     }, []);
 
     const countryArray = allCountries.map(e => {
-        return e.Country;
+        return {
+            Country: e.Country,
+            Slug: e.Slug
+        };
     })
 
     const mappedArray = countryArray.map(e => {
-        return <Link to={`/${e}`} key={e}><div className="input-element" onClick={() => SelectCountry(e)}><span>{e}</span></div></Link>
+        return <Link to={`/${e.Slug}`} key={e.Slug}><div className="input-element" onClick={() => SelectCountry(e.Country)}><span>{e.Country}</span></div></Link>
     });
     
     const getCountryData = async country => {
@@ -44,6 +47,7 @@ const Input = () => {
 
     const SelectCountry = country => {
         document.querySelector("#country-input").value = "";
+        setCurrentCountry(country);
         getCountryData(country).then(res => {
             setCovidData(res);
         });
@@ -62,7 +66,8 @@ const Input = () => {
                     const index = country.search(value);
                     if (index != -1) {
                         array.push({
-                            Country: country
+                            Country: country,
+                            Slug: e.Slug
                         })
                     }
                 }
