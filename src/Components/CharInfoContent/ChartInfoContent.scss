@@ -1,0 +1,78 @@
+@import '../../globalStyle.scss';
+
+.chart-info-content {
+    position: relative;
+    width: 100%;
+    height: 890px;
+    margin-top: 25px;
+
+    .site-left-side-header {
+        position: relative;
+        background-color: $primary_color;
+        width: 410px;
+        top: 15px;
+        left: 0;
+        border-top-right-radius: 15px;
+        border-bottom-right-radius: 15px;
+        display: flex;
+        align-items: center;
+        height: 110px;
+        box-shadow: 0px 0px 13px -4px rgba(0,0,0,0.75);
+
+        img {
+            margin-left: 35px;
+            width: 64px;
+        }
+
+        p {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-left: 7px;
+        }
+
+        @media screen and (max-width: 630px) {
+            border-radius: 0px;
+            width: 100%;
+            justify-content: center;
+        }
+    }
+
+    .site-chart-container {
+        position: relative;
+        top: 80px;
+        width: 90%;
+        height: 600px;
+        margin-left: auto;
+        margin-right: auto;
+        border-radius: 6px;
+        box-shadow: 0px 0px 7px -4px rgba(0,0,0,0.75);
+
+        @media screen and (max-width: 610px) {
+            width: 100%;
+            margin: 0;
+            box-shadow: 0px 0px 0px 0px rgba(0,0,0,0.0);
+        }
+    }
+
+    .bottom-api-text {
+        position: relative;
+        color: $secondary_text_color;
+        font-size: 1.3rem;
+        text-align: center;
+        top: 117px;
+
+        a {
+            font-weight: bold;
+            color: $secondary_text_color;
+        }
+    }
+}
+
+.chart-info-content.global {
+    height: auto;
+    padding-bottom: 120px;
+    
+    .site-chart-container {
+        height: 4500px;
+    }
+}

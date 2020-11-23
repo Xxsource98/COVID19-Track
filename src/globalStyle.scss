@@ -1,0 +1,29 @@
+@import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500&display=swap');
+
+$primary_color: #1E272E;
+$background_color: #F5F5F5;
+$primary_text_color: #FBFBFB;
+$secondary_text_color: #707070;
+$text_great: #05C46B;
+$text_bad: #F53B57;
+$text_font: 'Quicksand', sans-serif;
+
+body {
+    margin: 0;
+    padding: 0;
+    font-size: 20px;
+    font-family: $text_font;
+    color: $primary_text_color;
+    background-color: $background_color;
+    scroll-behavior: smooth;
+    box-sizing: border-box;
+}
+
+a {
+    text-decoration: none;
+    color: $primary_text_color;
+}
+
+input {
+    outline: none;
+}

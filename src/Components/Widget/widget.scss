@@ -1,0 +1,63 @@
+@import '../../globalStyle.scss';
+
+.widget {
+    position: relative;
+    background-color: #fff;
+    border-radius: 10px;
+    color: $secondary_text_color;
+    width: 270px;
+    height: 340px;
+    box-shadow: 0px 0px 13px -4px rgba(0,0,0,0.75);
+
+    img {
+        position: relative;
+        top: 6px;
+        left: 50%;
+        transform: translate(-50%, 0);
+        width: 64px;
+    }
+
+    .widget-title {
+        position: relative;
+        text-align: center;
+        top: -25px;
+        font-size: 1.8rem;
+    }
+
+    p.widget-info {
+        position: relative;
+        left: 25px;
+        top: -20px;
+        width: 230px;
+        margin-top: -15px;
+        font-size: 1.5rem;
+
+    }
+
+    .widget-increase {
+        position: relative;
+        font-weight: bold;
+        text-align: right;
+        right: 25px;
+        top: -25px;
+        font-size: 2rem;
+    }
+
+    .widget-increase.better {
+        color: $text_great;
+    }
+
+    .widget-increase.worst {
+        color: $text_bad;
+    }
+
+    @media screen and (max-width: 990px) {
+        width: 50%;
+        margin-bottom: 15px;
+        top: 25px;
+    }
+
+    @media screen and (max-width: 610px) {
+        width: 95%;
+    }
+}

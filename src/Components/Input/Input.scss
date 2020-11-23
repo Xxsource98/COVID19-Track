@@ -1,0 +1,64 @@
+@import '../../globalStyle.scss';
+
+.input-container {
+    position: relative;
+    top: 15px;
+
+    input {
+        width: 430px;
+        height: 30px;
+        padding: 7px;
+        font-size: 1.1rem;
+        border-radius: 8px;
+        transition: all 0.4s ease;
+        border: none;
+        box-shadow: 0px 0px 13px -4px rgba(0,0,0,0.75);
+        z-index: 21;
+        background-color: #fff;
+
+        @media screen and (max-width: 610px) {
+            width: 90%;
+        }
+
+        &:focus {
+            border-bottom-left-radius: 0;
+            border-bottom-right-radius: 0;
+        }
+    }
+
+    .input-dropdown {
+        display: none;
+        position: absolute;
+        background-color: #fff;
+        width: 100%;
+        z-index: 15;
+        max-height: 200px;
+        overflow-y: scroll;        
+        border-bottom-left-radius: 8px;
+        border-bottom-right-radius: 8px;
+
+        .input-element {     
+            padding: 5px 0px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: $primary_color;
+
+            span {
+                transition: all 0.3s ease;
+                margin-left: 5px;
+            }
+
+            &:hover {
+                span {
+                    margin-left: 10px;
+                }
+            }
+        }
+    }
+}
+
+.input-container.opened {
+    .input-dropdown {
+        display: block;
+    }
+}
