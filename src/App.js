@@ -33,10 +33,11 @@ const App = () => {
             betterSituation: false,
         }
     ]);
+    const [ currentCountry, setCurrentCountry ] = useState("");
 
     return (
         <HashRouter>
-            <covidContext.Provider value={{ covidData, setCovidData, summariseArray, setSummariseArray }}>
+            <covidContext.Provider value={{ covidData, setCovidData, summariseArray, setSummariseArray, currentCountry, setCurrentCountry }}>
                 <div className="container">
                     <Navbar />
                     <Switch>
