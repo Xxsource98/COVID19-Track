@@ -2,7 +2,7 @@ import React, { useContext } from 'react'
 
 // Components
 import { Line, HorizontalBar } from 'react-chartjs-2'
-import { covidContext } from '../../app'
+import { covidContext } from '../../App'
 
 const chart_dot = "#1e272e";
 const chart_recovered = "#05C46B";
