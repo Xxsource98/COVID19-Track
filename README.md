@@ -1,3 +1,6 @@
+# About
+I made simple web application with current covid-19 tracking. You can select there every country, see the most important data and even see chart with month increase.
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
