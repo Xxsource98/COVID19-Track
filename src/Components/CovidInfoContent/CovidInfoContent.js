@@ -1,4 +1,4 @@
-import React, { useEffect, useContext } from 'react'
+import React, { useEffect, useContext, useState } from 'react'
 import { useParams } from 'react-router-dom'
 
 // Components
@@ -79,47 +79,121 @@ const CovidInfoContent = () => {
 
     const updateObject = (type, data) => {
         const today = new Date;
-        today.setDate(today.getDate() - 2);
+        today.setDate(today.getDate() - 1);
         var yesterDayActive = 0;
         var preYesterdayActive = 0;
         var newObject = {};
         const updateType = type === "Infected" ? "Infected" : type === "Recovered" ? "Recovered" : "Deaths";
+        const yesterday = new Date;
+        const preYesterdayDate = new Date;
+        yesterday.setDate(today.getDate() - 1)
+        preYesterdayDate.setDate(yesterday.getDate() - 1);
+
+        const isAnyElementHasProvince = () => {
+            for (const e of data) {
+                if (e.Province !== "") {
+                    return true;
+                }
+            }
+            return false;
+        }
 
         if (data === undefined) {
             return newObject;
         }
 
-        for (const e of data) {      
-            const eDate = new Date(e.Date);
-            const yesterday = new Date;
-            const preYesterdayDate = new Date;
-            yesterday.setDate(today.getDate() - 1)
-            preYesterdayDate.setDate(yesterday.getDate() - 1);
-
-            if (eDate.getDate() === preYesterdayDate.getDate() && eDate.getMonth() === preYesterdayDate.getMonth() && eDate.getFullYear() === preYesterdayDate.getFullYear()) {        
-                preYesterdayActive = updateType === "Infected" ? e.Confirmed : updateType === "Recovered" ? e.Recovered : e.Deaths;
-            }
-
-            if (eDate.getDate() === yesterday.getDate() && eDate.getMonth() === yesterday.getMonth() && eDate.getFullYear() === yesterday.getFullYear()) {      
-                yesterDayActive = updateType === "Infected" ? e.Confirmed : updateType === "Recovered" ? e.Recovered : e.Deaths;
-            }
+        /* Check if api element has provinces, because every province has same data */
+        if (isAnyElementHasProvince()) {
+            let finishedProvinces = [];
+            let totalAmount = 0;
+            let yesterdayAmount = 0;
+            let preYesterdayAmount = 0;
             
-            if (eDate.getDate() === today.getDate() && eDate.getMonth() === yesterday.getMonth()  && eDate.getFullYear() === today.getFullYear()) {
-                const preYesterday = new Date(yesterday);
-                preYesterday.setDate(preYesterday.getDate() - 1);
-                const totalValue = updateType === "Infected" ? e.Confirmed : updateType === "Recovered" ? e.Recovered : e.Deaths;
-                const increase = calculateIncrease(yesterDayActive, totalValue);
-                const isIncreaseBetterThanYesterdayInfectsDeaths = calculateDifference(yesterday, today, data, updateType) < calculateDifference(preYesterday, yesterday, data, updateType);
-                const isIncreaseBetterThanYesterdayRecoveries = calculateDifference(yesterday, today, data, updateType) > calculateDifference(preYesterday, yesterday, data, updateType);
+            for (let i = data.length - 1; i >= 0; i--) {
+                const e = data[i];
 
-                newObject = {
-                    total: totalValue,
-                    today: Math.sign(calculateDifference(yesterday, today, data, updateType) === -1) ? calculateDifference(yesterday, today, data, updateType) : String(`+${calculateDifference(yesterday, today, data, updateType)}`),
-                    yesterday: Math.sign(yesterDayActive - preYesterdayActive) === -1 ? yesterDayActive - preYesterdayActive : String(`+${yesterDayActive - preYesterdayActive}`),
-                    increase: increase,
-                    betterSituation: updateType === "Recovered" ? isIncreaseBetterThanYesterdayRecoveries : isIncreaseBetterThanYesterdayInfectsDeaths
+                const typeForFind = updateType === "Infected" ? e.Confirmed : updateType === "Recovered" ? e.Recovered : e.Deaths;
+                const eDate = new Date(e.Date);
+                const lastDayOfTheMonth = new Date(eDate.getFullYear(), eDate.getMonth(), 0);
+                
+                const isDateLastDay =       eDate.getFullYear() === lastDayOfTheMonth.getFullYear() &&
+                                            eDate.getMonth() - 1 === lastDayOfTheMonth.getMonth() &&
+                                            eDate.getDate() === lastDayOfTheMonth.getDate();
+
+                const isDateYesterday =     eDate.getFullYear() === yesterday.getFullYear() &&
+                                            eDate.getMonth()  === yesterday.getMonth() &&
+                                            eDate.getDate() === yesterday.getDate();
+
+                const isDatePreYesterday =  eDate.getFullYear() === preYesterdayDate.getFullYear() &&
+                                            eDate.getMonth()  === preYesterdayDate.getMonth() &&
+                                            eDate.getDate() === preYesterdayDate.getDate();
+
+                const isDateToday =         eDate.getFullYear() === today.getFullYear() &&
+                                            eDate.getMonth() - 1 === today.getMonth() - 1 &&
+                                            eDate.getDate() === today.getDate()
+
+
+                if (isDatePreYesterday) {
+                    preYesterdayAmount += typeForFind;
                 }
-            } else continue;
+
+                if (isDateYesterday) {
+                    yesterdayAmount += typeForFind;
+                }
+
+                if (isDateToday && !isDateLastDay) {
+                    totalAmount += typeForFind;
+                    finishedProvinces.push(e.Province);
+                }
+                                        
+                if (isDateLastDay) {
+                    if (finishedProvinces.indexOf(e.Province) === -1) {
+                        totalAmount += typeForFind;
+                        finishedProvinces.push(e.Province);
+                    } 
+                }                 
+            }
+
+            const increase = calculateIncrease(yesterdayAmount, totalAmount);
+            const isIncreaseBetterThanYesterdayInfectsDeaths = calculateDifference(yesterday, today, data, updateType) < calculateDifference(preYesterdayDate, yesterday, data, updateType);
+            const isIncreaseBetterThanYesterdayRecoveries = calculateDifference(yesterday, today, data, updateType) > calculateDifference(preYesterdayDate, yesterday, data, updateType);
+
+            newObject = {
+                total: totalAmount,
+                today: calculateIncrease(yesterdayAmount, totalAmount),
+                yesterday: Math.sign(yesterdayAmount - preYesterdayAmount) === -1 ? yesterdayAmount - preYesterdayAmount : String(`+${yesterdayAmount - preYesterdayAmount}`),
+                increase: increase,
+                betterSituation: updateType === "Recovered" ? isIncreaseBetterThanYesterdayRecoveries : isIncreaseBetterThanYesterdayInfectsDeaths
+            };
+        } else {
+            for (const e of data) {
+                const eDate = new Date(e.Date);
+
+                if (eDate.getDate() === preYesterdayDate.getDate() && eDate.getMonth() === preYesterdayDate.getMonth() && eDate.getFullYear() === preYesterdayDate.getFullYear()) {        
+                    preYesterdayActive = updateType === "Infected" ? e.Confirmed : updateType === "Recovered" ? e.Recovered : e.Deaths;
+                }
+
+                if (eDate.getDate() === yesterday.getDate() && eDate.getMonth() === yesterday.getMonth() && eDate.getFullYear() === yesterday.getFullYear()) {      
+                    yesterDayActive = updateType === "Infected" ? e.Confirmed : updateType === "Recovered" ? e.Recovered : e.Deaths;
+                }
+                
+                if (eDate.getDate() === today.getDate() && eDate.getMonth() === yesterday.getMonth()  && eDate.getFullYear() === today.getFullYear()) {
+                    const preYesterday = new Date(yesterday);
+                    preYesterday.setDate(preYesterday.getDate() - 1);
+                    const totalValue = updateType === "Infected" ? e.Confirmed : updateType === "Recovered" ? e.Recovered : e.Deaths;
+                    const increase = calculateIncrease(yesterDayActive, totalValue);
+                    const isIncreaseBetterThanYesterdayInfectsDeaths = calculateDifference(yesterday, today, data, updateType) < calculateDifference(preYesterdayDate, yesterday, data, updateType);
+                    const isIncreaseBetterThanYesterdayRecoveries = calculateDifference(yesterday, today, data, updateType) > calculateDifference(preYesterdayDate, yesterday, data, updateType);
+
+                    newObject = {
+                        total: totalValue,
+                        today: Math.sign(calculateDifference(yesterday, today, data, updateType) === -1) ? calculateDifference(yesterday, today, data, updateType) : String(`+${calculateDifference(yesterday, today, data, updateType)}`),
+                        yesterday: Math.sign(yesterDayActive - preYesterdayActive) === -1 ? yesterDayActive - preYesterdayActive : String(`+${yesterDayActive - preYesterdayActive}`),
+                        increase: increase,
+                        betterSituation: updateType === "Recovered" ? isIncreaseBetterThanYesterdayRecoveries : isIncreaseBetterThanYesterdayInfectsDeaths
+                    }
+                } else continue;
+            }
         }
 
         return newObject;
@@ -162,7 +236,7 @@ const CovidInfoContent = () => {
             
         const allCountries = data.Countries;
         for (const country of allCountries) {
-            if (country.Country === countryToFind) {
+            if (country.Slug === countryToFind) {
                 const totalInfected = country.TotalConfirmed;
                 const totalRecovered = country.TotalRecovered;
                 return totalInfected - totalRecovered;
@@ -185,7 +259,8 @@ const CovidInfoContent = () => {
     const infectedData = isEmpty ? updateGlobalObject("Infected", summariseArray) : updateObject("Infected", covidData);
     const recoveredData = isEmpty ? updateGlobalObject("Recovered", summariseArray) : updateObject("Recovered", covidData);
     const deathsData = isEmpty ? updateGlobalObject("Deaths", summariseArray) : updateObject("Deaths", covidData);
-    const activePeople = isEmpty ? calculateGlobalActivePeople(summariseArray) : calculateActivePeople(summariseArray, currentCountry);
+    const activePeople = isEmpty ? calculateGlobalActivePeople(summariseArray) : calculateActivePeople(summariseArray, country);
+
 
     return (
         <div className="covid-info-content" onClick={e => {
@@ -197,7 +272,7 @@ const CovidInfoContent = () => {
             }
         }}>
             <Input/>
-            <div className="selected-country">Selected Country: <span>{currentCountry === "" ? "Global" : currentCountry}</span></div>
+            <div className="selected-country">Selected Country: <span>{currentCountry === "" ? country === undefined ? "Global" : country : currentCountry}</span></div>
             <div className="widgets-container">
                 <Widget 
                     iconImage={Images.infectLogo}

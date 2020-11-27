@@ -22,24 +22,69 @@ const Chart = ({
         const today = new Date;
         const updateType = type === "Infected" ? "Infected" : type === "Recovered" ? "Recovered" : "Deaths";
  
-         for (const e of covidData) {
-             const date = new Date(e.Date);
-             const lastDayOfMonth = new Date(date.getFullYear(), month - 1, 0);
- 
-             if (date.getMonth() === (month - 2)) { // Last Month
-                 if (date.getDate() === lastDayOfMonth.getDate()) {
-                     lastMonth = updateType === "Infected" ? e.Confirmed : updateType === "Recovered" ? e.Recovered : e.Deaths;
-                 }
-             }
-             if (date.getMonth() === (month - 1)) { // Current Month
-                 if (today.getDate() !== lastDayOfMonth.getDate()) {
-                     thisMonth = updateType === "Infected" ? e.Confirmed : updateType === "Recovered" ? e.Recovered : e.Deaths;
-                 } else {
-                     thisMonth = updateType === "Infected" ? e.Confirmed : updateType === "Recovered" ? e.Recovered : e.Deaths;
-                 }
-             }
+        const isAnyElementHasProvince = () => {
+            for (const e of covidData) {
+                if (e.Province !== "") {
+                    return true;
+                }
+            }
+            return false;
         }
- 
+
+        /* Check if api element has provinces, because every province has same data */
+        if (isAnyElementHasProvince()) {
+            let finishedProvinces = [];
+            
+            for (let i = covidData.length - 1; i >= 0; i--) {
+                const e = covidData[i];
+
+                const date = new Date(e.Date);
+                const lastDayOfMonth = new Date(date.getFullYear(), month - 1, 0);
+                const typeForFind = updateType === "Infected" ? e.Confirmed : updateType === "Recovered" ? e.Recovered : e.Deaths;
+
+                if (date.getMonth() === (month - 2)) { // Last Month
+                    if (date.getDate() === lastDayOfMonth.getDate()) {
+                            lastMonth += typeForFind;
+                            console.log(`pushed: ${typeForFind}`)
+                    }
+                }
+
+                if (date.getMonth() === (month - 1)) { // Current Month
+                    if (today.getDate() !== lastDayOfMonth.getDate()) {
+                        if (finishedProvinces.indexOf(e.Province) === -1) { 
+                            thisMonth += typeForFind;
+                            console.log(`pushed this month: ${typeForFind}`)
+                            finishedProvinces.push(e.Province);
+                        }
+                    } else {
+                        if (finishedProvinces.indexOf(e.Province) === -1) { 
+                            thisMonth += typeForFind;
+                            console.log(`pushed last day: ${typeForFind}`)
+                            finishedProvinces.push(e.Province);
+                        }
+                    }
+                }
+            }
+        } else {
+            for (const e of covidData) {
+                const date = new Date(e.Date);
+                const lastDayOfMonth = new Date(date.getFullYear(), month - 1, 0);
+
+                if (date.getMonth() === (month - 2)) { // Last Month
+                    if (date.getDate() === lastDayOfMonth.getDate()) {
+                        lastMonth = updateType === "Infected" ? e.Confirmed : updateType === "Recovered" ? e.Recovered : e.Deaths;
+                    }
+                }
+                if (date.getMonth() === (month - 1)) { // Current Month
+                    if (today.getDate() !== lastDayOfMonth.getDate()) {
+                        thisMonth = updateType === "Infected" ? e.Confirmed : updateType === "Recovered" ? e.Recovered : e.Deaths;
+                    } else {
+                        thisMonth = updateType === "Infected" ? e.Confirmed : updateType === "Recovered" ? e.Recovered : e.Deaths;
+                    }
+                }
+            }
+        }
+
         return thisMonth - lastMonth;
     }
 

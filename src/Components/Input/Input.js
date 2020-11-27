@@ -47,7 +47,7 @@ const Input = () => {
 
     const SelectCountry = country => {
         document.querySelector("#country-input").value = "";
-        setCurrentCountry(country);
+        setCurrentCountry(country !== "/" ? country : "Global");
         getCountryData(country).then(res => {
             setCovidData(res);
         });
