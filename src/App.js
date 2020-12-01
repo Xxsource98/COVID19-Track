@@ -17,7 +17,7 @@ const App = () => {
         Countries: [ "Not", "Found" ]
     });
     const [ covidData, setCovidData ] = useState([
-        {
+        /*{
             Global: {
                 TotalConfirmed: -1,
                 NewConfirmed: -1,
@@ -31,7 +31,7 @@ const App = () => {
             yesterday: -1,
             increase: '-',
             betterSituation: false,
-        }
+        }*/
     ]);
     const [ currentCountry, setCurrentCountry ] = useState("");
 

@@ -86,8 +86,10 @@ const CovidInfoContent = () => {
         const updateType = type === "Infected" ? "Infected" : type === "Recovered" ? "Recovered" : "Deaths";
         const yesterday = new Date;
         const preYesterdayDate = new Date;
-        yesterday.setDate(today.getDate() - 1)
+        yesterday.setDate(today.getDate() - 1);
+        yesterday.setMonth(today.getMonth());
         preYesterdayDate.setDate(yesterday.getDate() - 1);
+        preYesterdayDate.setMonth(yesterday.getMonth());
 
         const isAnyElementHasProvince = () => {
             for (const e of data) {
@@ -115,7 +117,7 @@ const CovidInfoContent = () => {
                 const typeForFind = updateType === "Infected" ? e.Confirmed : updateType === "Recovered" ? e.Recovered : e.Deaths;
                 const eDate = new Date(e.Date);
                 const lastDayOfTheMonth = new Date(eDate.getFullYear(), eDate.getMonth(), 0);
-                
+
                 const isDateLastDay =       eDate.getFullYear() === lastDayOfTheMonth.getFullYear() &&
                                             eDate.getMonth() - 1 === lastDayOfTheMonth.getMonth() &&
                                             eDate.getDate() === lastDayOfTheMonth.getDate();

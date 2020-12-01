@@ -20,8 +20,10 @@ const Chart = ({
         var lastMonth = 0;
         var thisMonth = 0;
         const today = new Date;
+        today.setDate(today.getDate() - 1);
+        today.setMonth(month - 1);
         const updateType = type === "Infected" ? "Infected" : type === "Recovered" ? "Recovered" : "Deaths";
- 
+
         const isAnyElementHasProvince = () => {
             for (const e of covidData) {
                 if (e.Province !== "") {
@@ -42,50 +44,52 @@ const Chart = ({
                 const lastDayOfMonth = new Date(date.getFullYear(), month - 1, 0);
                 const typeForFind = updateType === "Infected" ? e.Confirmed : updateType === "Recovered" ? e.Recovered : e.Deaths;
 
-                if (date.getMonth() === (month - 2)) { // Last Month
-                    if (date.getDate() === lastDayOfMonth.getDate()) {
+                if (date.getFullYear() === today.getFullYear()) {
+                    if (date.getMonth() === (month - 2)) { // Last Month
+                        if (date.getDate() === lastDayOfMonth.getDate()) {
                             lastMonth += typeForFind;
-                            console.log(`pushed: ${typeForFind}`)
+                        }
                     }
-                }
 
-                if (date.getMonth() === (month - 1)) { // Current Month
-                    if (today.getDate() !== lastDayOfMonth.getDate()) {
-                        if (finishedProvinces.indexOf(e.Province) === -1) { 
-                            thisMonth += typeForFind;
-                            console.log(`pushed this month: ${typeForFind}`)
-                            finishedProvinces.push(e.Province);
-                        }
-                    } else {
-                        if (finishedProvinces.indexOf(e.Province) === -1) { 
-                            thisMonth += typeForFind;
-                            console.log(`pushed last day: ${typeForFind}`)
-                            finishedProvinces.push(e.Province);
+                    if (date.getMonth() === (month - 1)) { // Current Month
+                        if (today.getDate() !== lastDayOfMonth.getDate()) {
+                            if (finishedProvinces.indexOf(e.Province) === -1) { 
+                                thisMonth += typeForFind;
+                                finishedProvinces.push(e.Province);
+                            }
+                        } else {
+                            if (finishedProvinces.indexOf(e.Province) === -1) { 
+                                thisMonth += typeForFind;
+                                finishedProvinces.push(e.Province);
+                            }
                         }
                     }
-                }
+                } else continue;
             }
         } else {
             for (const e of covidData) {
                 const date = new Date(e.Date);
                 const lastDayOfMonth = new Date(date.getFullYear(), month - 1, 0);
 
-                if (date.getMonth() === (month - 2)) { // Last Month
-                    if (date.getDate() === lastDayOfMonth.getDate()) {
-                        lastMonth = updateType === "Infected" ? e.Confirmed : updateType === "Recovered" ? e.Recovered : e.Deaths;
+                if (date.getFullYear() === today.getFullYear()) {
+                    if (date.getMonth() === (month - 2)) { // Last Month
+                        if (date.getDate() === lastDayOfMonth.getDate()) {
+                            lastMonth = updateType === "Infected" ? e.Confirmed : updateType === "Recovered" ? e.Recovered : e.Deaths;
+                        }
                     }
-                }
-                if (date.getMonth() === (month - 1)) { // Current Month
-                    if (today.getDate() !== lastDayOfMonth.getDate()) {
-                        thisMonth = updateType === "Infected" ? e.Confirmed : updateType === "Recovered" ? e.Recovered : e.Deaths;
-                    } else {
-                        thisMonth = updateType === "Infected" ? e.Confirmed : updateType === "Recovered" ? e.Recovered : e.Deaths;
+                    if (date.getMonth() === (month - 1)) { // Current Month
+                        if (today.getDate() !== lastDayOfMonth.getDate()) {
+                            thisMonth = updateType === "Infected" ? e.Confirmed : updateType === "Recovered" ? e.Recovered : e.Deaths;
+                        } else {
+                            thisMonth = updateType === "Infected" ? e.Confirmed : updateType === "Recovered" ? e.Recovered : e.Deaths;
+                        }
                     }
-                }
+                } else continue;
             }
         }
 
-        return thisMonth - lastMonth;
+        /* avoid incorrect value with empty month */
+        return (thisMonth - lastMonth) === -lastMonth ? 0 : thisMonth - lastMonth;
     }
 
     const RenderChart = () => {
