@@ -1,3 +1,5 @@
+<h2><b>If you have '-1' values, try to use another web browser, because it's unable to get a data from API, because the site isn't HTTPS (error: ERR_CERT_AUTHORITY_INVALID)</b></h2>
+
 # About
 I made simple web application with current covid-19 tracking. You can select there every country, see the most important data and even see chart with month increase.
 
