@@ -1,4 +1,4 @@
-import React, { useEffect, useContext, useState } from 'react'
+import React, { useEffect, useContext } from 'react'
 import { useParams } from 'react-router-dom'
 
 // Components
@@ -44,13 +44,13 @@ const CovidInfoContent = () => {
             top: 0
         })
 
-        updateData(`https://api.covid19api.com/summary`).then(data => setSummariseArray(data)).catch(e => console.log(`Error: ${e}`));
+        updateData(`https://api.covid19api.com/summary`).then(data => setSummariseArray(data)).catch(e => console.log(`Fetch Error: ${e}`));
 
         if (!isEmpty) {
-            const date = new Date;
-            updateData(`https://api.covid19api.com/country/${country}?from=${date.getFullYear()}-01-01T00:00:00Z&to=${date.getFullYear()}-${String(date.getMonth() + 1).length === 1 ? `0${date.getMonth()}` : date.getMonth() + 1}-${String(date.getDate() + 1).length === 1 ? `0${date.getDate()}` : date.getDate() + 1}T00:00:00Z`)
+            const date = new Date();
+            updateData(`https://api.covid19api.com/country/${country}?from=${date.getFullYear()}-01-01T00:00:00Z&to=${date.getFullYear()}-${String(date.getMonth() + 1).length === 1 ? `0${date.getMonth() + 1}` : date.getMonth() + 1}-${String(date.getDate() - 1).length === 1 ? `0${date.getDate() - 1}` : date.getDate() - 1}T00:00:00Z`)
             .then(data => setCovidData(data))
-            .catch(e => console.log(`Error: ${e}`));
+            .catch(e => console.log(`Fetch Error: ${e}`));
         }
     }, []);
 
@@ -78,29 +78,31 @@ const CovidInfoContent = () => {
     }
 
     const updateObject = (type, data) => {
-        const today = new Date;
+        const today = new Date();
         today.setDate(today.getDate() - 1);
         var yesterDayActive = 0;
         var preYesterdayActive = 0;
         var newObject = {};
         const updateType = type === "Infected" ? "Infected" : type === "Recovered" ? "Recovered" : "Deaths";
-        const yesterday = new Date;
-        const preYesterdayDate = new Date;
+        const yesterday = new Date();
+        const preYesterdayDate = new Date();
         yesterday.setDate(today.getDate() - 1);
         yesterday.setMonth(today.getMonth());
         preYesterdayDate.setDate(yesterday.getDate() - 1);
         preYesterdayDate.setMonth(yesterday.getMonth());
-
+        
         const isAnyElementHasProvince = () => {
-            for (const e of data) {
-                if (e.Province !== "") {
-                    return true;
+            if (!data.length > 0 && data.message === undefined) {
+                for (const e of data) {
+                    if (e.Province !== "") {
+                        return true;
+                    }
                 }
             }
             return false;
         }
 
-        if (data === undefined) {
+        if (data === undefined || covidData.message !== undefined) {
             return newObject;
         }
 
@@ -170,7 +172,7 @@ const CovidInfoContent = () => {
         } else {
             for (const e of data) {
                 const eDate = new Date(e.Date);
-
+                
                 if (eDate.getDate() === preYesterdayDate.getDate() && eDate.getMonth() === preYesterdayDate.getMonth() && eDate.getFullYear() === preYesterdayDate.getFullYear()) {        
                     preYesterdayActive = updateType === "Infected" ? e.Confirmed : updateType === "Recovered" ? e.Recovered : e.Deaths;
                 }
@@ -179,7 +181,7 @@ const CovidInfoContent = () => {
                     yesterDayActive = updateType === "Infected" ? e.Confirmed : updateType === "Recovered" ? e.Recovered : e.Deaths;
                 }
                 
-                if (eDate.getDate() === today.getDate() && eDate.getMonth() === yesterday.getMonth()  && eDate.getFullYear() === today.getFullYear()) {
+                if (eDate.getDate() === today.getDate() && eDate.getMonth() === yesterday.getMonth() && eDate.getFullYear() === today.getFullYear()) {
                     const preYesterday = new Date(yesterday);
                     preYesterday.setDate(preYesterday.getDate() - 1);
                     const totalValue = updateType === "Infected" ? e.Confirmed : updateType === "Recovered" ? e.Recovered : e.Deaths;
@@ -262,7 +264,6 @@ const CovidInfoContent = () => {
     const recoveredData = isEmpty ? updateGlobalObject("Recovered", summariseArray) : updateObject("Recovered", covidData);
     const deathsData = isEmpty ? updateGlobalObject("Deaths", summariseArray) : updateObject("Deaths", covidData);
     const activePeople = isEmpty ? calculateGlobalActivePeople(summariseArray) : calculateActivePeople(summariseArray, country);
-
 
     return (
         <div className="covid-info-content" onClick={e => {

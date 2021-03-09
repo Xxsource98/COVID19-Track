@@ -23,7 +23,7 @@ const Input = () => {
         updateData(`https://api.covid19api.com/summary`).then(data => {
             setAllCountries(data.Countries)
             setOriginalCountries(data.Countries);
-        }).catch(e => console.log(`Error: ${e}`));
+        }).catch(e => console.log(`Fetch Error: ${e}`));
     }, []);
 
     const countryArray = allCountries.map(e => {
@@ -39,7 +39,7 @@ const Input = () => {
     
     const getCountryData = async country => {
         const date = new Date;
-        const fetchResponse = await fetch(`https://api.covid19api.com/country/${country}?from=${date.getFullYear()}-01-01T00:00:00Z&to=${date.getFullYear()}-${String(date.getMonth() + 1).length === 1 ? `0${date.getMonth()}` : date.getMonth() + 1}-${String(date.getDate() + 1).length === 1 ? `0${date.getDate()}` : date.getDate() + 1}T00:00:00Z`);
+        const fetchResponse = await fetch(`https://api.covid19api.com/country/${country}?from=${date.getFullYear()}-01-01T00:00:00Z&to=${date.getFullYear()}-${String(date.getMonth() + 1).length === 1 ? `0${date.getMonth() + 1}` : date.getMonth() + 1}-${String(date.getDate() - 1).length === 1 ? `0${date.getDate() - 1}` : date.getDate() - 1}T00:00:00Z`);
         const json = await fetchResponse.json();
         
         return json;
