@@ -25,12 +25,19 @@ const Chart = ({
         const updateType = type === "Infected" ? "Infected" : type === "Recovered" ? "Recovered" : "Deaths";
 
         const isAnyElementHasProvince = () => {
-            for (const e of covidData) {
-                if (e.Province !== "") {
-                    return true;
+            if (!covidData.length > 0 && covidData.message === undefined)
+            {
+                for (const e of covidData) {
+                    if (e.Province !== "") {
+                        return true;
+                    }
                 }
             }
             return false;
+        }
+
+        if (covidData.message !== undefined) {
+            return 0;
         }
 
         /* Check if api element has provinces, because every province has same data */
