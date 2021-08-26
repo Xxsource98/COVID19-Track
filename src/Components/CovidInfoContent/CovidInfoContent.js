@@ -52,7 +52,7 @@ const CovidInfoContent = () => {
             .then(data => setCovidData(data))
             .catch(e => console.log(`Fetch Error: ${e}`));
         }
-    }, []);
+    }, [country, isEmpty, setCovidData, setSummariseArray]);
 
     const calculateDifference = (yesterday, today, covidData, type) => {
         const todayDate = new Date(today);
@@ -92,7 +92,7 @@ const CovidInfoContent = () => {
         preYesterdayDate.setMonth(yesterday.getMonth());
         
         const isAnyElementHasProvince = () => {
-            if (!data.length > 0 && data.message === undefined) {
+            if (data.length > 0 && data.message === undefined) {
                 for (const e of data) {
                     if (e.Province !== "") {
                         return true;

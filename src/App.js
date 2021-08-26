@@ -1,10 +1,10 @@
-import React, { useEffect, createContext, useState, useContext } from 'react'
-import { HashRouter, Route, Router, Switch, useParams } from 'react-router-dom'
+import React, { createContext, useState } from 'react'
+import { HashRouter, Route, Switch } from 'react-router-dom'
 
 // Components
 import Navbar from './Components/Navbar/navbar'
 import CovidInfoContent from './Components/CovidInfoContent/CovidInfoContent'
-import ChartInfoContent from './Components/CharInfoContent/ChartInfoContent'
+import ChartInfoContent from './Components/ChartInfoContent/ChartInfoContent'
 import Footer from './Components/Footer/footer'
 
 // Style

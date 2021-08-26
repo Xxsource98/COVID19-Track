@@ -38,7 +38,7 @@ const Input = () => {
     });
     
     const getCountryData = async country => {
-        const date = new Date;
+        const date = new Date();
         const fetchResponse = await fetch(`https://api.covid19api.com/country/${country}?from=${date.getFullYear()}-01-01T00:00:00Z&to=${date.getFullYear()}-${String(date.getMonth() + 1).length === 1 ? `0${date.getMonth() + 1}` : date.getMonth() + 1}-${String(date.getDate() - 1).length === 1 ? `0${date.getDate() - 1}` : date.getDate() - 1}T00:00:00Z`);
         const json = await fetchResponse.json();
         
@@ -64,7 +64,8 @@ const Input = () => {
                 for (const e of orginalCountries) {
                     const country = e.Country;
                     const index = country.search(value);
-                    if (index != -1) {
+                    
+                    if (index !== -1) {
                         array.push({
                             Country: country,
                             Slug: e.Slug
